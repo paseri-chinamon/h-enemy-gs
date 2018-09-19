@@ -1,0 +1,19 @@
+version: '3'
+services:
+  web:
+    build: .
+    command: [sh, -c, npm install && npm start]
+    volumes:
+      - .:/myapp
+    links:
+      - "redis"
+    ports:
+      - "8080:3000"
+    tty: true
+
+  redis:
+    image: redis:4.0
+    command: redis-server --appendonly yes
+    volumes:
+      - ./redis:/data
+    tty: true

@@ -3,12 +3,14 @@ services:
   web:
     build: .
     command: [sh, -c, npm install && npm start]
+    env_file: .env
     volumes:
       - .:/myapp
     links:
       - "redis"
     ports:
-      - "8080:3000"
+      - "3000:3000"
+      - "8080:8080"
     tty: true
 
   redis:

@@ -1,6 +1,4 @@
-var _app = require('express')();
-var _http = require('http').Server(_app);
-var io = require('socket.io')(_http);
+var io = require('socket.io')(server);
 var redis = require('redis');
 var client = redis.createClient(process.env.REDIS_URL);
 var game_id = 1;
@@ -37,5 +35,3 @@ io.sockets.on('connection', function (socket) {
   });
 
 });
-
-_http.listen(process.env.PORT || process.env.SOCKET_PORT);

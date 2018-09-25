@@ -1,16 +1,10 @@
-var http = require('http');
+var _app = require('express')();
+var _http = require('http').Server(_app);
+var io = require('socket.io')(_http);
 var redis = require('redis');
 var client = redis.createClient(process.env.REDIS_URL);
 var game_id = 1;
 var game_key = {};
-
-server = http.createServer(function (req, res) {
-  res.writeHead(200, { 'Content-Type': 'test/html' });
-  res.end('server connected');
-});
-
-server.listen(process.env.SOCKET_PORT || '8080');
-var io = require('socket.io').listen(server);
 
 io.sockets.on('connection', function (socket) {
   
@@ -43,3 +37,5 @@ io.sockets.on('connection', function (socket) {
   });
 
 });
+
+_http.listen(process.env.PORT || process.env.SOCKET_PORT);

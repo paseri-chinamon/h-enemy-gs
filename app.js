@@ -8,9 +8,8 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var gamesRouter = require('./routes/games');
 
-var socket = require('./routes/module/mod_socket.js');
-
 var app = express();
+var socket = require('./routes/module/mod_socket.js');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

@@ -37,6 +37,10 @@ var redis = require('redis');
 var client = redis.createClient(process.env.REDIS_URL);
 var game_id = 1;
 var game_key = {};
+var player_key = {};
+
+io.set('heartbeat timeout', 4000);
+io.set('heartbeat interval', 2000);
 
 io.sockets.on('connection', function (socket) {
 
@@ -56,6 +60,7 @@ io.sockets.on('connection', function (socket) {
     if (game_key[token]) {
       socket.emit('playerConnectNotice', { 'socket_id': game_key[token] });
       socket.to(game_key[token]).emit('playerAddNotice', { 'player_socket_id': socket.id });
+      player_key[socket.id] = game_key[token];
       console.log(`player : ${socket.id} connected`);
     } else {
       console.log('idがありません');
@@ -66,6 +71,18 @@ io.sockets.on('connection', function (socket) {
   socket.on("playerAction", function (socket_id, data) {
     socket.to(socket_id).emit('playerActionNotice', { 'player_socket_id': socket.id, 'message': data });
     //console.log(`player ${socket.id} action`);
+  });
+
+  socket.on('disconnect', function () {
+    if (player_key[socket.id]) {
+      socket.to(player_key[socket.id]).emit('playerDisconnectNotice', { 'player_socket_id': socket.id });
+      delete player_key[socket.id];
+      console.log(`player : ${socket.id} disconnected`);
+    }
+  });
+
+  socket.on('gameAction', function (player_socket_id, message) {
+    socket.to(player_socket_id).emit("gamePlayerNotice", { 'message' : message });
   });
 
 });
